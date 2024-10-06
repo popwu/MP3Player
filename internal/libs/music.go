@@ -1,4 +1,4 @@
-package models
+package libs
 
 // Song 结构体表示一个音乐文件
 type Song struct {

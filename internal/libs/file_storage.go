@@ -1,4 +1,4 @@
-package storage
+package libs
 
 import (
 	"encoding/json"
@@ -7,7 +7,7 @@ import (
 	"path/filepath"
 	"strings"
 
-	"mp3-player/internal/models"
+	"github.com/qiniu/go-sdk/v7/storage"
 )
 
 type FileStorage struct {
@@ -47,20 +47,20 @@ func (fs *FileStorage) AddLibrary(path string) error {
 	return ioutil.WriteFile(fs.filename, data, 0644)
 }
 
-func (fs *FileStorage) GetSongs() ([]models.Song, error) {
+func (fs *FileStorage) GetSongs() ([]Song, error) {
 	libraries, err := fs.GetLibraries()
 	if err != nil {
 		return nil, err
 	}
 
-	var songs []models.Song
+	var songs []Song
 	for _, library := range libraries {
 		err := filepath.Walk(library, func(path string, info os.FileInfo, err error) error {
 			if err != nil {
 				return err
 			}
 			if !info.IsDir() && isSupportedAudioFile(path) {
-				songs = append(songs, models.Song{
+				songs = append(songs, Song{
 					Title: filepath.Base(path),
 					Path:  path,
 				})
@@ -98,4 +98,32 @@ func (fs *FileStorage) IsValidSongPath(path string) bool {
 	}
 
 	return false
+}
+
+func (fs *FileStorage) SaveFileList(fileList *[]storage.ListItem) error {
+	// 将文件列表转换为 JSON
+	jsonData, err := json.Marshal(fileList)
+	if err != nil {
+		return err
+	}
+
+	// 获取当前可执行文件的路径
+	execPath, err := os.Executable()
+	if err != nil {
+		return err
+	}
+
+	// 获取应用程序的根目录（假设可执行文件在根目录下）
+	rootDir := filepath.Dir(execPath)
+
+	// 确定保存文件列表的路径
+	filePath := filepath.Join(rootDir, "file_list.json")
+
+	// 写入文件
+	err = os.WriteFile(filePath, jsonData, 0644)
+	if err != nil {
+		return err
+	}
+
+	return nil
 }

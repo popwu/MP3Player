@@ -1,6 +1,7 @@
 package api
 
 import (
+	"fmt"
 	"net/http"
 	"os"
 	"path/filepath"
@@ -27,6 +28,12 @@ func loadEnv() {
 
 func TestCheckQiniuAccess(t *testing.T) {
 	loadEnv()
+
+	// 打印环境变量
+	fmt.Println("QINIU_ACCESS_KEY:", os.Getenv("QINIU_ACCESS_KEY"))
+	fmt.Println("QINIU_SECRET_KEY:", os.Getenv("QINIU_SECRET_KEY"))
+	fmt.Println("QINIU_BUCKET:", os.Getenv("QINIU_BUCKET"))
+	fmt.Println("QINIU_ZONE:", os.Getenv("QINIU_ZONE"))
 
 	// 保存原始环境变量
 	originalAccessKey := os.Getenv("QINIU_ACCESS_KEY")
@@ -88,11 +95,27 @@ func TestCheckQiniuAccess(t *testing.T) {
 		// 	expectedStatus: http.StatusOK,
 		// 	expectedMsg:    "成功访问存储空间",
 		// },
+		// 新增使用环境变量的测试用例
+		{
+			name:           "有效凭证",
+			accessKey:      os.Getenv("QINIU_ACCESS_KEY"),
+			secretKey:      os.Getenv("QINIU_SECRET_KEY"),
+			bucket:         os.Getenv("QINIU_BUCKET"),
+			zone:           os.Getenv("QINIU_ZONE"),
+			expectedStatus: http.StatusOK,
+			expectedMsg:    "成功访问存储空间",
+		},
 	}
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			status, msg := checkQiniuAccess(tt.accessKey, tt.secretKey, tt.bucket, tt.zone)
+			fmt.Printf("运行测试: %s\n", tt.name)
+			fmt.Printf("使用的参数: accessKey=%s, secretKey=%s, bucket=%s, zone=%s\n",
+				tt.accessKey, tt.secretKey, tt.bucket, tt.zone)
+
+			status, msg, err := checkQiniuAccess(tt.accessKey, tt.secretKey, tt.bucket, tt.zone)
+
+			fmt.Printf("得到的结果: status=%d, msg=%s, err=%v\n", status, msg, err)
 			assert.Equal(t, tt.expectedStatus, status)
 			assert.Equal(t, tt.expectedMsg, msg)
 		})
