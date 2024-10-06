@@ -3,69 +3,50 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>音乐播放器</title>
+    <title>登录 - 音乐播放器</title>
     <link rel="icon" type="image/x-icon" href="/static/favicon.ico">
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
 </head>
-<body class="bg-gray-100 h-full flex flex-col" x-data="playerApp()">
-    <div class="container mx-auto px-4 py-8 flex flex-col h-full">
-        
-        
-        <div class="flex-grow flex flex-col min-h-0">
-            <h2 class="text-xl font-semibold mb-2">播放列表</h2>
-            <div class="flex-grow overflow-y-auto border border-gray-300 rounded">
-                <ul class="list-disc pl-8 pr-4 py-2">
-                    <template x-for="(song, index) in songs" :key="song.path">
-                        <li @click="playSong(song)" 
-                            x-text="song.title" 
-                            :class="{'cursor-pointer hover:bg-gray-100 py-1': true, 'font-bold text-blue-500': index === currentSongIndex}"
-                        ></li>
-                    </template>
-                </ul>
-            </div>
-        </div>
-
-        <div id="player" class="mt-4">
-            <audio x-ref="audioPlayer" @ended="onSongEnded()" class="w-full"></audio>
-            <div class="flex justify-between items-center mt-4">
-                <div class="flex space-x-2">
-                    <button @click="toggleShuffle()" 
-                            :class="{'bg-blue-500 text-white': isShuffled, 'bg-gray-300': !isShuffled}" 
-                            class="px-4 py-2 rounded">
-                        <span x-text="isShuffled ? '顺序播放' : '随机播放'"></span>
-                    </button>
-                    <button @click="playButtonClicked()" 
-                            :class="{'bg-blue-500 text-white': isPlaying, 'bg-gray-300': !isPlaying}" 
-                            class="px-4 py-2 rounded">
-                        <span x-text="isPlaying ? '暂停' : '播放'"></span>
-                    </button>
-                    <button @click="prevSong()" class="bg-gray-300 px-4 py-2 rounded">上一首</button>
-                    <button @click="nextSong()" class="bg-gray-300 px-4 py-2 rounded">下一首</button>
-                </div>
-                <button @click="openSettings()" class="bg-gray-300 px-4 py-2 rounded">设置</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- 设置弹窗 -->
-    <div x-show="showSettings" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
-        <div class="bg-white p-6 rounded-lg">
-            <h2 class="text-xl font-semibold mb-4">设置</h2>
+<body class="bg-gray-100 h-full flex items-center justify-center" x-data="loginApp()">
+    <div class="bg-white p-8 rounded-lg shadow-md w-96">
+        <h1 class="text-2xl font-semibold mb-6 text-center">登录</h1>
+        <form @submit.prevent="login">
             <div class="mb-4">
-                <h3 class="text-lg font-semibold mb-2">音乐库</h3>
-                <input type="text" x-model="newLibraryPath" class="border p-2 mr-2" placeholder="输入音乐库路径">
-                <button @click="addLibrary()" class="bg-blue-500 text-white px-4 py-2 rounded">添加</button>
+                <label for="accessKey" class="block mb-2">QINIU_ACCESS_KEY</label>
+                <input type="text" id="accessKey" x-model="accessKey" class="w-full border p-2 rounded" required>
             </div>
-            <ul class="list-disc pl-5 mb-4">
-                <template x-for="library in libraries" :key="library">
-                    <li x-text="library"></li>
-                </template>
-            </ul>
-            <button @click="closeSettings()" class="bg-gray-300 px-4 py-2 rounded">关闭</button>
-        </div>
+            <div class="mb-4">
+                <label for="secretKey" class="block mb-2">QINIU_SECRET_KEY</label>
+                <input type="password" id="secretKey" x-model="secretKey" class="w-full border p-2 rounded" required>
+            </div>
+            <div class="mb-4">
+                <label for="bucket" class="block mb-2">QINIU_BUCKET</label>
+                <input type="text" id="bucket" x-model="bucket" class="w-full border p-2 rounded" required>
+            </div>
+            <div class="mb-6">
+                <label for="zone" class="block mb-2">QINIU_ZONE</label>
+                <input type="text" id="zone" x-model="zone" class="w-full border p-2 rounded" required>
+            </div>
+            <button type="submit" class="w-full bg-blue-500 text-white py-2 rounded hover:bg-blue-600">登录</button>
+        </form>
     </div>
 
-    <script src="/static/js/player.js"></script>
+    <script>
+        function loginApp() {
+            return {
+                accessKey: '',
+                secretKey: '',
+                bucket: '',
+                zone: '',
+                login() {
+                    // 这里应该发送登录请求到后端
+                    // 成功后跳转到播放页面
+                    console.log('登录信息:', this.accessKey, this.secretKey, this.bucket, this.zone);
+                    window.location.href = '/player.html';
+                }
+            }
+        }
+    </script>
 </body>
 </html>

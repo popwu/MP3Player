@@ -1,27 +1,15 @@
 function playerApp() {
     return {
-        libraries: [],
         songs: [],
-        newLibraryPath: '',
-        currentSongIndex: -1, // 将初始值设为-1，表示没有歌曲在播放
+        currentSongIndex: -1,
         isPlaying: false,
-        showSettings: false,
         isShuffled: false,
         isLooped: false,
         playHistory: [],
         historyIndex: -1,
 
         init() {
-            this.fetchLibraries();
             this.fetchSongs();
-        },
-
-        fetchLibraries() {
-            fetch('/api/libraries')
-                .then(response => response.json())
-                .then(data => {
-                    this.libraries = data;
-                });
         },
 
         fetchSongs() {
@@ -30,24 +18,6 @@ function playerApp() {
                 .then(data => {
                     this.songs = data;
                 });
-        },
-
-        addLibrary() {
-            if (this.newLibraryPath.trim() === '') return;
-
-            fetch('/api/libraries', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded',
-                },
-                body: `libraryPath=${encodeURIComponent(this.newLibraryPath)}`
-            })
-            .then(response => response.json())
-            .then(() => {
-                this.fetchLibraries();
-                this.fetchSongs();
-                this.newLibraryPath = '';
-            });
         },
 
         playSong(song, addToHistory = true) {
@@ -103,7 +73,6 @@ function playerApp() {
 
         togglePlay() {
             if (this.currentSongIndex === -1 && this.songs.length > 0) {
-                // 如果没有选中的歌曲，播放第一首歌
                 this.playSong(this.songs[0]);
             } else if (this.currentSongIndex !== -1) {
                 this.isPlaying = !this.isPlaying;
@@ -113,14 +82,6 @@ function playerApp() {
                     this.$refs.audioPlayer.pause();
                 }
             }
-        },
-
-        openSettings() {
-            this.showSettings = true;
-        },
-
-        closeSettings() {
-            this.showSettings = false;
         },
 
         onSongEnded() {
@@ -135,7 +96,6 @@ function playerApp() {
 
         playButtonClicked() {
             if (this.currentSongIndex === -1 && this.songs.length > 0) {
-                // 如果没有选中的歌曲，播放第一首歌
                 this.playSong(this.songs[0]);
             } else {
                 this.togglePlay();

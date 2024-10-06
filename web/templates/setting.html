@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="zh" class="h-full">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>设置 - 音乐播放器</title>
+    <link rel="icon" type="image/x-icon" href="/static/favicon.ico">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
+</head>
+<body class="bg-gray-100 h-full flex flex-col" x-data="settingsApp()">
+    <div class="container mx-auto px-4 py-8 flex flex-col h-full">
+        <h2 class="text-xl font-semibold mb-4">设置</h2>
+        <div class="mb-4">
+            <h3 class="text-lg font-semibold mb-2">音乐库</h3>
+            <input type="text" x-model="newLibraryPath" class="border p-2 mr-2" placeholder="输入音乐库路径">
+            <button @click="addLibrary()" class="bg-blue-500 text-white px-4 py-2 rounded">添加</button>
+        </div>
+        <ul class="list-disc pl-5 mb-4">
+            <template x-for="library in libraries" :key="library">
+                <li x-text="library"></li>
+            </template>
+        </ul>
+        <a href="/player.html" class="bg-gray-300 px-4 py-2 rounded self-start">返回播放器</a>
+    </div>
+
+    <script src="/static/js/settings.js"></script>
+</body>
+</html>

@@ -20,6 +20,7 @@ func main() {
 	r.POST("/api/libraries", handlers.AddLibrary)
 	r.GET("/api/songs", handlers.GetSongs)
 	r.GET("/api/stream/:songPath", handlers.StreamSong)
+	r.GET("/api/logincheck", handlers.LoginCheck)
 
 	r.Static("/static", "./web/static")
 	r.LoadHTMLGlob("web/templates/*")
