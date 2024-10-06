@@ -1,7 +1,8 @@
-package api
+package tests
 
 import (
 	"fmt"
+	"mp3-player/internal/libs"
 	"net/http"
 	"os"
 	"path/filepath"
@@ -76,26 +77,6 @@ func TestCheckQiniuAccess(t *testing.T) {
 			expectedStatus: http.StatusUnauthorized,
 			expectedMsg:    "认证失败或无法访问存储空间",
 		},
-		// 注意：以下测试需要有效的七牛云凭证才能通过
-		// {
-		// 	name:           "有效凭证_空存储空间",
-		// 	accessKey:      "valid_access_key",
-		// 	secretKey:      "valid_secret_key",
-		// 	bucket:         "empty_bucket",
-		// 	zone:           "huadong",
-		// 	expectedStatus: http.StatusOK,
-		// 	expectedMsg:    "存储空间为空",
-		// },
-		// {
-		// 	name:           "有效凭证_非空存储空间",
-		// 	accessKey:      "valid_access_key",
-		// 	secretKey:      "valid_secret_key",
-		// 	bucket:         "non_empty_bucket",
-		// 	zone:           "huadong",
-		// 	expectedStatus: http.StatusOK,
-		// 	expectedMsg:    "成功访问存储空间",
-		// },
-		// 新增使用环境变量的测试用例
 		{
 			name:           "有效凭证",
 			accessKey:      os.Getenv("QINIU_ACCESS_KEY"),
@@ -113,7 +94,7 @@ func TestCheckQiniuAccess(t *testing.T) {
 			fmt.Printf("使用的参数: accessKey=%s, secretKey=%s, bucket=%s, zone=%s\n",
 				tt.accessKey, tt.secretKey, tt.bucket, tt.zone)
 
-			status, msg, err := checkQiniuAccess(tt.accessKey, tt.secretKey, tt.bucket, tt.zone)
+			status, msg, err := libs.CheckQiniuAccess(tt.accessKey, tt.secretKey, tt.bucket, tt.zone)
 
 			fmt.Printf("得到的结果: status=%d, msg=%s, err=%v\n", status, msg, err)
 			assert.Equal(t, tt.expectedStatus, status)

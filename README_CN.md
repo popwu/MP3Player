@@ -106,3 +106,11 @@ c.Header("Accept-Ranges", "bytes")
   "message": "删除失败"
 }
 ```
+
+
+## 测试
+- 运行测试
+```
+go test ./tests
+go test -v -count=1 ./tests/ -run TestCheckQiniuAccess
+```
